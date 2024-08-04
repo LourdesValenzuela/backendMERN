@@ -7,6 +7,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const mascotaRoutes = require('./server/routes/mascota.routes');
 const port = process.env.PORT || 1000;
+
 // Crea una instancia de la aplicación Express
 const app = express();
 
@@ -28,12 +29,20 @@ app.use((err, req, res, next) => {
 // Usa las rutas de mascotas bajo el prefijo '/mascotas'
 app.use('/mascotas', mascotaRoutes);
 
-// Conexión a la base de datos de MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Conexión a la base de datos establecida'))
-  .catch(err => console.log('Error al conectar a la base de datos:', err));
+// Conexión a la base de datos de MongoDB Atlas usando variables de entorno
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+  .then(() => console.log('Established a connection to the database'))
+  .catch(err => console.log('Something went wrong when connecting to the database', err));
 
+// Agrega la ruta para la raíz
+app.get('/', (req, res) => {
+  res.send('Bienvenido a la API de mascotas');
+});
 
+// Inicia el servidor en el puerto especificado
 app.listen(port, () => {
   console.log(`Listening at Port ${port}`);
 });
